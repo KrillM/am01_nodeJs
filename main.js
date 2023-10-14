@@ -17,7 +17,6 @@ app.get('*', function(req, res, next){
   });
 });
 
-// app.get('/', (req, res) => res.send('Hello World!'))
 app.get("/", function(req, res){
   let title = "Welcome";
   let description = "Hello Node.js Express";
@@ -30,25 +29,30 @@ app.get("/", function(req, res){
     res.send(html);
 });
 
-app.get("/page/:pageId", function(req, res){
+app.get("/page/:pageId", function(req, res, next){
   var filteredId = path.parse(req.params.pageId).base;
   fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
-    let title = req.params.pageId;
-    let sanitizedTitle = sanitizeHtml(title);
-    let sanitizedDescription = sanitizeHtml(description, {
-      allowedTags:['h1']
-    });
-    let list = template.list(req.list);
-    let html = template.html(sanitizedTitle, list,
-      `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
-      ` <a href="/create">create</a>
-        <a href="/update/${sanitizedTitle}">update</a>
-        <form action="/process_delete" method="post">
-          <input type="hidden" name="id" value="${sanitizedTitle}">
-          <input type="submit" value="delete">
-        </form>`
-    );
-    res.send(html);
+    if(err){
+      next(err);
+    }
+    else{
+      let title = req.params.pageId;
+      let sanitizedTitle = sanitizeHtml(title);
+      let sanitizedDescription = sanitizeHtml(description, {
+        allowedTags:['h1']
+      });
+      let list = template.list(req.list);
+      let html = template.html(sanitizedTitle, list,
+        `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
+        ` <a href="/create">create</a>
+          <a href="/update/${sanitizedTitle}">update</a>
+          <form action="/process_delete" method="post">
+            <input type="hidden" name="id" value="${sanitizedTitle}">
+            <input type="submit" value="delete">
+          </form>`
+      );
+      res.send(html);
+    }
   });
 });
 
@@ -126,6 +130,15 @@ app.post("/process_delete", function(req, res){
   fs.unlink(`data/${filteredId}`, function(err){
     res.redirect("/");
   });
+});
+
+app.use(function(req, res, next){
+  res.status(404).send("찾을 수 없는 정보입니다.");
+});
+
+app.use(function(err, req, res, next){
+  console.error(err.stack);
+  res.status(500).send("서버 이상입니다.");
 });
 
 // app.listen(3002, () => console.log('Example app listening on port 3000!'))
