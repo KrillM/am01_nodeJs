@@ -2,12 +2,10 @@ const express = require('express');
 const app = express();
 const fs = require("fs");
 const path = require("path");
-const bodyParser = require("body-parser");
+const qs = require("querystring");
 const sanitizeHtml = require("sanitize-html");
 const template = require("./module1.js");
  
-app.use(bodyParser.urlencoded({extended: false}));
-
 // app.get('/', (req, res) => res.send('Hello World!'))
 app.get("/", function(req, res){
   fs.readdir("./data", function(err, filelist){
@@ -66,13 +64,20 @@ app.get("/create", function(req, res){
 });
 
 app.post("/process_create", function(req, res){
-  let post = req.body;
-  let title = post.title;
-  let description = post.description;
-  
-  fs.writeFile(`data/${title}`, description, 'utf8', function(err){
-    res.writeHead(302, {Location: `/?id=${title}`});
-    res.end();
+  let body = '';
+  req.on('data', function(data){
+    body += data;
+  });
+
+  req.on('end', function(){
+    let post = qs.parse(body);
+    let title = post.title;
+    let description = post.description;
+    
+    fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+      res.writeHead(302, {Location: `/?id=${title}`});
+      res.end();
+    })
   });
 });
 
@@ -104,26 +109,40 @@ app.get("/update/:pageId", function(req, res){
 });
 
 app.post("/process_update", function(req, res){
-  let post = req.body;
-  let id = post.id;
-  let title = post.title;
-  let description = post.description;
+  let body = '';
+  req.on('data', function(data){
+    body += data;
+  });
 
-  fs.rename(`data/${id}`, `data/${title}`, function(err){
-    fs.writeFile(`data/${title}`, description, 'utf8', function(err){
-      res.redirect(`/?id=${title}`);
-    })
+  req.on('end', function(){
+    let post = qs.parse(body);
+    let id = post.id;
+    let title = post.title;
+    let description = post.description;
+
+    fs.rename(`data/${id}`, `data/${title}`, function(err){
+      fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+        res.redirect(`/?id=${title}`);
+      })
+    });
   });
 });
 
 app.post("/process_delete", function(req, res){
-    let post = req.body;
-    let id = post.id;
-    let filteredId=path.parse(id).base;
+  let body = '';
+    req.on('data', function(data){
+        body += data;
+    });
 
-    fs.unlink(`data/${filteredId}`, function(err){
-      res.redirect("/");
-  });
+    req.on('end', function(){
+        let post = qs.parse(body);
+        let id = post.id;
+        let filteredId=path.parse(id).base;
+
+        fs.unlink(`data/${filteredId}`, function(err){
+          res.redirect("/");
+        })
+    });
 });
 
 // app.listen(3002, () => console.log('Example app listening on port 3000!'))
