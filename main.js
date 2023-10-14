@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const template = require("./modules/module1.js");
 const topicRouter=require("./modules/topic");
+const helmet = require('helmet')
+app.use(helmet());
 
 app.use("/modules", express.static(__dirname + "/modules"));
 app.use(bodyParser.urlencoded({extended: false}));
