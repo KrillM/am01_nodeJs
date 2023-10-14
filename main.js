@@ -7,6 +7,7 @@ const compression = require("compression");
 const sanitizeHtml = require("sanitize-html");
 const template = require("./modules/module1.js");
  
+app.use("/img", express.static(__dirname + "/img"));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(compression());
 app.get('*', function(req, res, next){
@@ -22,7 +23,8 @@ app.get("/", function(req, res){
   let description = "Hello Node.js Express";
   let list = template.list(req.list);
   let html = template.html(title, list, 
-    `<h2>${title}</h2>${description}`,
+    `<h2>${title}</h2>${description}
+    <img src="/img/picnic.jpg" style="width:300px; display:block; margin-top:10px;">`,
     `<a href="/create">create</a>`
     );
     res.send(html);
