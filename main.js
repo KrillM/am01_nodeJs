@@ -117,12 +117,12 @@ app.post("/process_update", function(req, res){
 });
 
 app.post("/process_delete", function(req, res){
-    let post = req.body;
-    let id = post.id;
-    let filteredId=path.parse(id).base;
+  let post = req.body;
+  let id = post.id;
+  let filteredId=path.parse(id).base;
 
-    fs.unlink(`data/${filteredId}`, function(err){
-      res.redirect("/");
+  fs.unlink(`data/${filteredId}`, function(err){
+    res.redirect("/");
   });
 });
 
