@@ -3,10 +3,12 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
+const compression = require("compression");
 const sanitizeHtml = require("sanitize-html");
 const template = require("./module1.js");
  
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(compression());
 
 // app.get('/', (req, res) => res.send('Hello World!'))
 app.get("/", function(req, res){
