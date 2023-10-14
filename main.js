@@ -5,7 +5,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const compression = require("compression");
 const sanitizeHtml = require("sanitize-html");
-const template = require("./module1.js");
+const template = require("./modules/module1.js");
  
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(compression());
