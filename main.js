@@ -6,7 +6,7 @@ const compression = require("compression");
 const template = require("./modules/module1.js");
 const topicRouter=require("./modules/topic");
 
-app.use("/img", express.static(__dirname + "/img"));
+app.use("/modules", express.static(__dirname + "/modules"));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(compression());
 app.get('*', function(req, res, next){
@@ -23,7 +23,7 @@ app.get("/", function(req, res){
   let list = template.list(req.list);
   let html = template.html(title, list, 
     `<h2>${title}</h2>${description}
-    <img src="/img/picnic.jpg" style="width:300px; display:block; margin-top:10px;">`,
+    <img src="/modules/picnic.jpg" style="width:300px; display:block; margin-top:10px;">`,
     `<a href="/topic/create">create</a>`
     );
     res.send(html);
