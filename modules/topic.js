@@ -20,9 +20,9 @@ router.get("/create", function(req, res){
         </form>
     `,'');
     res.send(html);
-    });
+});
 
-    router.post("/process_create", function(req, res){
+router.post("/process_create", function(req, res){
     let post = req.body;
     let title = post.title;
     let description = post.description;
@@ -33,28 +33,28 @@ router.get("/create", function(req, res){
 });
 
 router.get("/update/:pageId", function(req, res){
-let filteredId = path.parse(req.params.pageId).base;
+    let filteredId = path.parse(req.params.pageId).base;
 
-fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
-    let title = req.params.pageId;
-    let list = template.list(req.list);
-    let html = template.html(title, list,
-    `
-    <form action="/topic/process_update" method="post">
-        <input type="hidden" name="id" value="${title}">
-        <p><input type="text" name="title" placeholder="title" value="${title}"></p>
-        <p>
-        <textarea name="description" placeholder="description">${description}</textarea>
-        </p>
-        <p>
-        <input type="submit">
-        </p>
-    </form>
-    `,
-    `<a href="/topic/create">create</a> <a href="/topic/update/${title}">update</a>`
-    );
-    res.send(html);
-});
+    fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
+        let title = req.params.pageId;
+        let list = template.list(req.list);
+        let html = template.html(title, list,
+        `
+        <form action="/topic/process_update" method="post">
+            <input type="hidden" name="id" value="${title}">
+            <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+            <p>
+            <textarea name="description" placeholder="description">${description}</textarea>
+            </p>
+            <p>
+            <input type="submit">
+            </p>
+        </form>
+        `,
+        `<a href="/topic/create">create</a> <a href="/topic/update/${title}">update</a>`
+        );
+        res.send(html);
+    });
 });
   
 router.post("/process_update", function(req, res){
